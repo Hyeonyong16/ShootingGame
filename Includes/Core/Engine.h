@@ -7,9 +7,9 @@
 // 엔진 설정 구조체
 struct EngineSettings
 {
-	int			width		= 0;		// 콘솔 화면 가로 크기
-	int			height		= 0;		// 콘솔 화면 세로 크기
-	float		framerate	= 0.0f;		// 타겟 프레임 속도
+	int	width = 0;				// 콘솔 화면 가로 크기
+	int	height = 0;				// 콘솔 화면 세로 크기
+	float framerate	= 0.0f;		// 타겟 프레임 속도
 };
 
 class Level;
@@ -34,6 +34,10 @@ public:
 
 	// 싱글톤 접근 함수
 	static Engine& Get();
+
+	// 화면 가로/세로 크기 반환 함수
+	int GetWidth() const;
+	int GetHeight() const;
 
 private:	
 	void BeginPlay();

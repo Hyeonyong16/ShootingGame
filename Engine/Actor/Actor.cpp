@@ -1,18 +1,31 @@
 #include "Actor.h"
 #include "Utils/Utils.h"
 #include "Engine.h"
+#include "Level/level.h"
 
 #include <iostream>
 #include <Windows.h>
 
 
 
-Actor::Actor(const char _image, Color _color, const Vector2& _position)
-	: image(_image), color(_color), position(_position)
-{ }
+Actor::Actor(const char* _image, Color _color, const Vector2& _position)
+	: color(_color), position(_position)
+{
+	// 문자열 길이
+	width = (int)strlen(_image);
+
+	// 메모리 할당
+	image = new char[width + 1];
+
+	// 문자열 복사
+	strcpy_s(image, width + 1, _image);
+}
 
 Actor::~Actor()
-{ }
+{ 
+	// 메모리 해제
+	SafeDeleteArray(image);
+}
 
 // 이벤트 함수
 // 객체 생애주기(Lifetime)에 1번만 호출(초기화 목적)
@@ -27,23 +40,12 @@ void Actor::Tick(float _deltaTime)
 
 // 그리기 함수
 void Actor::Render()
-{
-	// Win32 API
-	// 커서 위치 이동
-
-	// 콘솔 출력을 제어하는 핸들 얻어오기
-	static HANDLE handle = GetStdHandle(STD_OUTPUT_HANDLE);
-	
-	// 커서 위치 값 생성
-	COORD coord = { (short)position.x, (short)position.y };
-	
+{	
 	// 커서 이동
-	//SetConsoleCursorPosition(handle, coord);
-	Utils::SetConsolePosition(coord);
+	Utils::SetConsolePosition(position);
 	
 	// 색상 설정
-	//SetConsoleTextAttribute(handle, (WORD)color);
-	Utils::SetConsoleTextColor(static_cast<WORD>(color));
+	Utils::SetConsoleTextColor(color);
 
 	// 그리기
 	std::cout << image;
@@ -51,17 +53,22 @@ void Actor::Render()
 
 void Actor::SetPosition(const Vector2 & _newPosition)
 {
-	// 콘솔 출력을 제어하는 핸들 얻어오기
-	static HANDLE handle = GetStdHandle(STD_OUTPUT_HANDLE);
+	// 예외처리 (화면 벗어났는지 확인)
+	if (_newPosition.x < 0) return;										// 화면 왼쪽
+	if (_newPosition.x + width - 1 > Engine::Get().GetWidth()) return;	// 화면 오른쪽
+	if (_newPosition.y < 0) return;										// 화면 위쪽
+	if (_newPosition.y - 1 > Engine::Get().GetHeight()) return;			// 화면 아래쪽
 
-	// 커서 위치 값 생성
-	COORD coord = { (short)position.x, (short)position.y };
+	if (position == _newPosition) return;								// 같으면 업데이트 안함
 
+	// 지울 위치 확인
+	Vector2 direction = _newPosition - position;
+	position.x = direction.x >= 0 ? position.x : position.x + width - 1;
+		
 	// 커서 이동
-	//SetConsoleCursorPosition(handle, coord);
-	Utils::SetConsolePosition(coord);
+	Utils::SetConsolePosition(position);
 
-	// **임시** 기존 글씨를 지우고 이동
+	// 문자열 길이 고려해서 지울 위치 확인해야 함
 	std::cout << ' ';
 
 	position = _newPosition;
@@ -85,6 +92,15 @@ void Actor::SetOwner(Level* _newOwner)
 Level* Actor::GetOwner()
 {
 	return owner;
+}
+
+void Actor::Destroy()
+{
+	// 삭제 요청되었다고 설정
+	isExpired = true;
+
+	// 레벨에 삭제 요청
+	owner->DestroyActor(this);
 }
 
 void Actor::QuitGame()

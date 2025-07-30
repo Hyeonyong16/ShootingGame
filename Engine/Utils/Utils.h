@@ -1,6 +1,8 @@
 #pragma once
 
 #include <Windows.h>
+#include "Math/Vector2.h"
+#include "Math/Color.h"
 
 // 프로젝트에서 다양하게 사용할 유틸리티 함수 모음
 namespace Utils
@@ -27,11 +29,21 @@ namespace Utils
 		SetConsoleCursorPosition(handle, _coord);
 	}
 
+	inline void SetConsolePosition(const Vector2& _position)
+	{
+		SetConsolePosition(static_cast<COORD>(_position));
+	}
+
 	// 콘솔 텍스트 색상 설정 함수
 	inline void SetConsoleTextColor(WORD _color)
 	{
 		static HANDLE handle = GetConsoleHandle();
 		SetConsoleTextAttribute(handle, _color);
+	}
+
+	inline void SetConsoleTextColor(Color _color)
+	{
+		SetConsoleTextColor(static_cast<WORD>(_color));
 	}
 
 

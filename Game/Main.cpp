@@ -1,7 +1,8 @@
 #include <iostream>
-#include "Engine.h"
+#include "Game/Game.h"
 
 int main()
 {
-	Engine engine;
+	Game game;
+	game.Run();
 }

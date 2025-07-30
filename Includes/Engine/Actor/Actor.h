@@ -1,7 +1,8 @@
 #pragma once
 
 #include "Core.h"
-#include "Math\Vector2.h"
+#include "Math/Vector2.h"
+#include "Math/Color.h"
 #include "RTTI.h"
 
 // Actor 정의
@@ -9,15 +10,6 @@
 // 2. 콘솔 창에 그리기(어떻게/무엇을)
 // 3. 엔진의 이벤트 함수 호출(BeginPlay/Tick/Draw)
 
-// 색상
-enum class Color
-{
-	Blue = 1,
-	Green = 2,
-	Red = 4,
-	White = Red | Green | Blue,
-	Intensity = 8,
-};
 
 // 전방선언
 class Level;

@@ -105,8 +105,13 @@ void Engine::Run()
 
 			// 현재 프레임의 입력을 기록
 			input.SavePreviousKeyStates();
-		}
 
+			// 이전 프레임에 추가 및 삭제 요청된 액터 처리
+			if (mainLevel)
+			{
+				mainLevel->ProcessAddAndDestroyActors();
+			}
+		}
 	}
 
 	// 정리 - 텍스트 색상 원래대로 돌려놓기
@@ -139,6 +144,16 @@ void Engine::Quit()
 Engine& Engine::Get()
 {
 	return *instance;
+}
+
+int Engine::GetWidth() const
+{
+	return settings.width;
+}
+
+int Engine::GetHeight() const
+{
+	return settings.height;
 }
 
 void Engine::BeginPlay()
@@ -220,7 +235,7 @@ void Engine::LoadEngineSettings()
 		// 헤더 문자열 비교
 		if (strcmp(header, "framerate") == 0)
 		{
-			sscanf_s(token, "frameRate = %f", &settings.framerate);
+			sscanf_s(token, "framerate = %f", &settings.framerate);
 		}
 		else if (strcmp(header, "width") == 0)
 		{

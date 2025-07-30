@@ -1,7 +1,8 @@
 #pragma once
 
 #include "Core.h"
-#include "Math\Vector2.h"
+#include "Math/Vector2.h"
+#include "Math/Color.h"
 #include "RTTI.h"
 
 // Actor 정의
@@ -9,15 +10,6 @@
 // 2. 콘솔 창에 그리기(어떻게/무엇을)
 // 3. 엔진의 이벤트 함수 호출(BeginPlay/Tick/Draw)
 
-// 색상
-enum class Color
-{
-	Blue = 1,
-	Green = 2,
-	Red = 4,
-	White = Red | Green | Blue,
-	Intensity = 8,
-};
 
 // 전방선언
 class Level;
@@ -29,7 +21,7 @@ class Engine_API Actor : public RTTI		// 최근은 RTTI 가 아닌 Object 이름으로 자�
 
 public:
 	Actor(
-		const char _image = ' ',
+		const char* _image = "",
 		Color _color = Color::White,
 		const Vector2& _position = Vector2::Zero
 	);
@@ -47,6 +39,8 @@ public:
 	void SetPosition(const Vector2& _newPosition);
 	Vector2 GetPosition() const;
 
+	int GetWidth() const;
+
 	// SortingOrder 설정 함수
 	// 숫자가 클수록 카메라에 가까움
 	inline unsigned int GetSortingOrder() const { return sortingOrder; }
@@ -56,17 +50,24 @@ public:
 	void SetOwner(Level* _newOwner);
 	Level* GetOwner();
 	
+	// 객체 삭제 함수
+	void Destroy();
+
 	// 게임 종료 요청 함수
 	void QuitGame();
 
-private:
+protected:
 	Vector2 position;				// 개체의 위치
-	char image = ' ';				// 그릴 값
+	char* image;				// 그릴 값
+	int width = 0;					// 문자열 길이
 	Color color;					// 텍스트 색상 값
 
 	bool hasBeganPlay = false;		// BeginPlay 호출이 되었는지 확인
 
 	unsigned int sortingOrder = 0;	// 정렬 순서
+
+	bool isActive = true;			// 액터가 활성상태인지
+	bool isExpired = false;			// 삭제 요청되었는지 
 
 	Level* owner = nullptr;			// 소유 레벨(오너십)
 };

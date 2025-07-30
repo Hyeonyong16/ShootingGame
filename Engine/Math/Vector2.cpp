@@ -36,6 +36,24 @@ bool Vector2::operator==(const Vector2& _other) const
 	return x == _other.x && y == _other.y;
 }
 
+Vector2::operator COORD()
+{
+	COORD coord;
+	coord.X = (short)x;
+	coord.Y = (short)y;
+
+	return coord;
+}
+
+Vector2::operator COORD() const
+{
+	COORD coord;
+	coord.X = (short)x;
+	coord.Y = (short)y;
+
+	return coord;
+}
+
 // Vector 를 문자열로 출력
 const char* Vector2::ToString()
 {
